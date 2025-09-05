@@ -1,6 +1,10 @@
 #ifndef OPENCV_CVCONFIG_H_INCLUDED
 #define OPENCV_CVCONFIG_H_INCLUDED
 
+/* my add start */
+/* ONNX Runtime support */  
+#cmakedefine HAVE_ONNXRUNTIME
+/* my add end */
 /* OpenCV compiled as static or dynamic libs */
 #cmakedefine BUILD_SHARED_LIBS
 

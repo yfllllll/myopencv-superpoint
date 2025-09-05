@@ -40,6 +40,13 @@
 //
 //M*/
 
+//////////////////////////////my add start ////
+#ifdef HAVE_ONNXRUNTIME  
+#include "opencv2/stitching/detail/lightglue.hpp" 
+//////////////////////////////////my add end///
+
+
+#endif
 #ifndef OPENCV_STITCHING_STITCHER_HPP
 #define OPENCV_STITCHING_STITCHER_HPP
 

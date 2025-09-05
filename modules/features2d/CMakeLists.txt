@@ -1,5 +1,20 @@
 set(the_description "2D Features Framework")
 
+#################my add start###############
+# 添加ONNX Runtime依赖检查  
+find_package(onnxruntime QUIET)  
+if(onnxruntime_FOUND)  
+    set(HAVE_ONNXRUNTIME TRUE)  
+    list(APPEND opencv_features2d_DEPS onnxruntime)  
+endif()  
+  
+# 添加源文件  
+if(HAVE_ONNXRUNTIME)  
+    list(APPEND opencv_features2d_SOURCES src/superpoint.cpp) 
+    list(APPEND opencv_features2d_DEPS onnxruntime) 
+endif()
+###################my add end##############################
+
 ocv_add_dispatched_file(sift SSE4_1 AVX2 AVX512_SKX)
 
 set(debug_modules "")

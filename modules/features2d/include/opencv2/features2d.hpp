@@ -40,6 +40,12 @@
 //
 //M*/
 
+////////////////my add start ////
+#ifdef HAVE_ONNXRUNTIME  
+#include "opencv2/superpoint.hpp"  
+#endif
+////////////////my add end///
+
 #ifndef OPENCV_FEATURES_2D_HPP
 #define OPENCV_FEATURES_2D_HPP
 

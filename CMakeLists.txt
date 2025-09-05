@@ -25,6 +25,17 @@ else()
   cmake_minimum_required(VERSION "${MIN_VER_CMAKE}" FATAL_ERROR)
 endif()
 
+
+####################my add start########################
+# ONNX Runtime support  
+OCV_OPTION(WITH_ONNXRUNTIME "Include ONNX Runtime support" OFF)  
+if(WITH_ONNXRUNTIME)  
+    find_package(onnxruntime REQUIRED)  
+    set(HAVE_ONNXRUNTIME TRUE)  
+endif()
+#########################my add end################################
+
+
 #
 # Configure CMake policies
 #
@@ -480,6 +491,30 @@ OCV_OPTION(WITH_FLATBUFFERS "Include Flatbuffers support (required by DNN/TFLite
 OCV_OPTION(WITH_ZLIB_NG "Use zlib-ng instead of zlib" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_ZLIB_NG)
+
+##################my add start##############################
+# ONNX Runtime support  
+OCV_OPTION(WITH_ONNXRUNTIME "Include ONNX Runtime support" OFF)  
+  
+if(WITH_ONNXRUNTIME)  
+    find_package(onnxruntime QUIET)  
+    if(onnxruntime_FOUND)  
+        set(HAVE_ONNXRUNTIME TRUE)  
+        set(ONNXRUNTIME_VERSION ${onnxruntime_VERSION})  
+        set(ONNXRUNTIME_INCLUDE_DIRS ${onnxruntime_INCLUDE_DIRS})  
+        set(ONNXRUNTIME_LIBRARIES ${onnxruntime_LIBRARIES})  
+        set(ONNXRUNTIME_LIBRARY_DIRS ${onnxruntime_LIBRARY_DIRS})  
+    else()  
+        message(WARNING "ONNX Runtime not found. SuperPoint and LightGlue will be disabled.")  
+        set(HAVE_ONNXRUNTIME FALSE)  
+    endif()  
+else()  
+    set(HAVE_ONNXRUNTIME FALSE)  
+endif()
+####################my add end###############################
+
+
+
 
 # OpenCV build components
 # ===================================================
