@@ -355,3 +355,15 @@ endmacro()
 # installation directory for the status.
 find_package_handle_standard_args(OpenCV REQUIRED_VARS OpenCV_INSTALL_PATH
                                   VERSION_VAR OpenCV_VERSION ${_OpenCV_FPHSA_ARGS})
+##################################my add start#################
+# ONNX Runtime support  
+set(OpenCV_HAVE_ONNXRUNTIME @HAVE_ONNXRUNTIME@)  
+set(OpenCV_ONNXRUNTIME_VERSION @ONNXRUNTIME_VERSION@)  
+  
+# ONNX Runtime library paths and includes  
+if(OpenCV_HAVE_ONNXRUNTIME)  
+    set(OpenCV_ONNXRUNTIME_INCLUDE_DIRS @ONNXRUNTIME_INCLUDE_DIRS@)  
+    set(OpenCV_ONNXRUNTIME_LIBRARIES @ONNXRUNTIME_LIBRARIES@)  
+    set(OpenCV_ONNXRUNTIME_LIBRARY_DIRS @ONNXRUNTIME_LIBRARY_DIRS@)  
+endif()
+##################################my add end#################
