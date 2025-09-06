@@ -21,10 +21,9 @@ ocv_install_3rdparty_licenses(mscr "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/mscr/ch
 # endif()  
   
 # 添加源文件  
-if(HAVE_ONNXRUNTIME)    
-    list(APPEND opencv_features2d_SOURCES src/superpoint.cpp)  
-    ocv_target_include_directories(${the_module} SYSTEM PRIVATE ${ONNXRUNTIME_INCLUDE_DIRS})      
-    ocv_target_link_libraries(${the_module} PRIVATE ${ONNXRUNTIME_LIBRARIES})      
-    ocv_target_compile_definitions(${the_module} PRIVATE HAVE_ONNXRUNTIME=1)      
+if(WITH_ONNXRUNTIME AND HAVE_ONNXRUNTIME)
+  ocv_target_link_libraries(${the_module} PRIVATE ${ONNXRUNTIME_LIBRARIES})  
+  ocv_target_compile_definitions(${the_module} PRIVATE HAVE_ONNXRUNTIME=1)  
+  ocv_target_include_directories(${the_module} SYSTEM PRIVATE ${ONNXRUNTIME_INCLUDE_DIRS})  
 endif()
 ###################my add end##############################

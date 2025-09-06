@@ -3,7 +3,9 @@
   
 #include "opencv2/features2d.hpp"  
 #include "opencv2/core.hpp"  
-#include <onnxruntime_cxx_api.h>  // 添加这一行 
+#ifdef HAVE_ONNXRUNTIME
+#include <onnxruntime_cxx_api.h>
+#endif
 #include <iostream> 
 #include "opencv2/imgproc.hpp"
 namespace cv {  
@@ -69,6 +71,7 @@ protected:
     @return Preprocessed image data as float vector  
     */  
     std::vector<float> ApplyTransform(const Mat& image, float& mean, float& std);  
+#ifdef HAVE_ONNXRUNTIME
     Ort::SessionOptions createSessionOptions() {  
         Ort::SessionOptions sessionOptions;  
         sessionOptions.SetIntraOpNumThreads(1);  
@@ -96,6 +99,7 @@ protected:
             return Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);  
         }  
     }
+    #endif
 };  
   
 } // namespace cv  

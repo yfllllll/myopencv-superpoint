@@ -18,8 +18,8 @@ endif()
 ocv_define_module(stitching opencv_imgproc opencv_features2d opencv_calib3d opencv_flann
                   OPTIONAL opencv_cudaarithm opencv_cudawarping opencv_cudafeatures2d opencv_cudalegacy opencv_cudaimgproc ${STITCHING_CONTRIB_DEPS}
                   WRAP python)
-if(HAVE_ONNXRUNTIME)    
-    ocv_target_include_directories(${the_module} SYSTEM PRIVATE ${ONNXRUNTIME_INCLUDE_DIRS})    
-    ocv_target_link_libraries(${the_module} PRIVATE ${ONNXRUNTIME_LIBRARIES})    
-    ocv_target_compile_definitions(${the_module} PRIVATE HAVE_ONNXRUNTIME)    
+if(WITH_ONNXRUNTIME AND HAVE_ONNXRUNTIME)
+  ocv_target_link_libraries(${the_module} PRIVATE ${ONNXRUNTIME_LIBRARIES})
+  ocv_target_compile_definitions(${the_module} PRIVATE HAVE_ONNXRUNTIME=1)
+  ocv_target_include_directories(${the_module} SYSTEM PRIVATE ${ONNXRUNTIME_INCLUDE_DIRS})
 endif()

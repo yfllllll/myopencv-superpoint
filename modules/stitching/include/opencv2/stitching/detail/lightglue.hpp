@@ -4,9 +4,12 @@
 #include "opencv2/stitching/detail/matchers.hpp"  
 #include "opencv2/stitching.hpp"  
 #include "opencv2/core.hpp"  
-#include <onnxruntime_cxx_api.h>  // 添加这一行  
+#ifdef HAVE_ONNXRUNTIME
+#include <onnxruntime_cxx_api.h>
+#endif
 #include <iostream>
 #include "opencv2/imgproc.hpp"
+#include "opencv2/calib3d.hpp"  // 添加这一行
 namespace cv {  
 namespace detail {  
   
@@ -83,6 +86,7 @@ protected:
     @param matches_info Match information to add  
     */  
     void AddMatcheinfo(const MatchesInfo& matches_info);  
+#ifdef HAVE_ONNXRUNTIME
     Ort::SessionOptions createSessionOptions() {  
         Ort::SessionOptions sessionOptions;  
         sessionOptions.SetIntraOpNumThreads(1);  
@@ -110,6 +114,7 @@ protected:
             return Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);  
         }  
     }
+    #endif
 };  
   
 } // namespace detail  
