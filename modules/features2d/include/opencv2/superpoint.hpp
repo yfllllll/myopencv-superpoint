@@ -3,7 +3,9 @@
   
 #include "opencv2/features2d.hpp"  
 #include "opencv2/core.hpp"  
-  
+#include <onnxruntime_cxx_api.h>  // 添加这一行 
+#include <iostream> 
+#include "opencv2/imgproc.hpp"
 namespace cv {  
   
 /** @brief SuperPoint feature detector and descriptor extractor.  

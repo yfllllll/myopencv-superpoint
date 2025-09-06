@@ -4,7 +4,9 @@
 #include "opencv2/stitching/detail/matchers.hpp"  
 #include "opencv2/stitching.hpp"  
 #include "opencv2/core.hpp"  
-  
+#include <onnxruntime_cxx_api.h>  // 添加这一行  
+#include <iostream>
+#include "opencv2/imgproc.hpp"
 namespace cv {  
 namespace detail {  
   
