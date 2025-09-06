@@ -26,14 +26,7 @@ else()
 endif()
 
 
-####################my add start########################
-# ONNX Runtime support  
-OCV_OPTION(WITH_ONNXRUNTIME "Include ONNX Runtime support" OFF)  
-if(WITH_ONNXRUNTIME)  
-    find_package(onnxruntime REQUIRED)  
-    set(HAVE_ONNXRUNTIME TRUE)  
-endif()
-#########################my add end################################
+
 
 
 #
@@ -496,20 +489,23 @@ OCV_OPTION(WITH_ZLIB_NG "Use zlib-ng instead of zlib" OFF
 # ONNX Runtime support  
 OCV_OPTION(WITH_ONNXRUNTIME "Include ONNX Runtime support" OFF)  
   
-if(WITH_ONNXRUNTIME)  
-    find_package(onnxruntime QUIET)  
-    if(onnxruntime_FOUND)  
-        set(HAVE_ONNXRUNTIME TRUE)  
-        set(ONNXRUNTIME_VERSION ${onnxruntime_VERSION})  
-        set(ONNXRUNTIME_INCLUDE_DIRS ${onnxruntime_INCLUDE_DIRS})  
-        set(ONNXRUNTIME_LIBRARIES ${onnxruntime_LIBRARIES})  
-        set(ONNXRUNTIME_LIBRARY_DIRS ${onnxruntime_LIBRARY_DIRS})  
-    else()  
-        message(WARNING "ONNX Runtime not found. SuperPoint and LightGlue will be disabled.")  
-        set(HAVE_ONNXRUNTIME FALSE)  
+if(WITH_ONNXRUNTIME)    
+    find_package(PkgConfig QUIET)  
+    if(PKG_CONFIG_FOUND)  
+        pkg_check_modules(ONNXRUNTIME QUIET onnxruntime)  
     endif()  
-else()  
-    set(HAVE_ONNXRUNTIME FALSE)  
+      
+    if(NOT ONNXRUNTIME_FOUND)  
+        include(cmake/FindONNXRuntime.cmake)  
+    endif()  
+      
+    if(onnxruntime_FOUND OR ONNXRUNTIME_FOUND)    
+        set(HAVE_ONNXRUNTIME TRUE)    
+        # 其余配置保持不变  
+    else()    
+        message(WARNING "ONNX Runtime not found. SuperPoint and LightGlue will be disabled.")    
+        set(HAVE_ONNXRUNTIME FALSE)    
+    endif()    
 endif()
 ####################my add end###############################
 
