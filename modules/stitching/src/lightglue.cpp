@@ -27,9 +27,10 @@ void LightGlue::match(const ImageFeatures& features1, const ImageFeatures& featu
     MatchesInfo& matches_info)    
 {    
     Ort::Env env(ORT_LOGGING_LEVEL_FATAL, "LightGlue");    
-    Ort::SessionOptions sessionOptions;    
-    sessionOptions.SetIntraOpNumThreads(1);    
-    sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
+    // Ort::SessionOptions sessionOptions;    
+    // sessionOptions.SetIntraOpNumThreads(1);    
+    // sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
+    Ort::SessionOptions sessionOptions = createSessionOptions();  
         
 #ifndef _WIN32  
     static Ort::Session lightglueSession(env, m_modelPath.c_str(), sessionOptions);  
@@ -85,8 +86,8 @@ void LightGlue::match(const ImageFeatures& features1, const ImageFeatures& featu
     }    
       
     const char* input_names[] = { "kpts0", "kpts1", "desc0", "desc1" };    
-    Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);    
-  
+    Ort::MemoryInfo memoryInfo = createMemoryInfo();
+
     std::vector<Ort::Value> inputTensor;    
     std::vector<int64_t> kp1Shape{ 1, (int64_t)features1.keypoints.size(), 2 };    
     inputTensor.emplace_back(Ort::Value::CreateTensor<float>(memoryInfo, kp1.data(), kp1.size(), kp1Shape.data(), kp1Shape.size()));    

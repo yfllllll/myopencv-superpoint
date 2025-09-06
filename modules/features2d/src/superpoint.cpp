@@ -40,9 +40,10 @@ void SuperPoint::detectAndCompute(InputArray image, InputArray mask,
     bool useProvidedKeypoints)    
 {    
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "SuperPoint");    
-    Ort::SessionOptions sessionOptions;    
-    sessionOptions.SetIntraOpNumThreads(1);    
-    sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
+    // Ort::SessionOptions sessionOptions;    
+    // sessionOptions.SetIntraOpNumThreads(1);    
+    // sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
+    Ort::SessionOptions sessionOptions = createSessionOptions();
         
 #ifndef _WIN32  
     static Ort::Session extractorSession(env, m_modelPath.c_str(), sessionOptions);  
@@ -64,7 +65,8 @@ void SuperPoint::detectAndCompute(InputArray image, InputArray mask,
   
     std::vector<int64_t> inputShape{ 1, 1, grayImg.rows, grayImg.cols };    
   
-    Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);    
+    // Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);   
+    Ort::MemoryInfo memoryInfo = createMemoryInfo(); 
     Ort::Value inputTensor = Ort::Value::CreateTensor<float>(memoryInfo, imgData.data(), imgData.size(), inputShape.data(), inputShape.size());    
   
     const char* input_names[] = { "image" };    
@@ -98,7 +100,35 @@ void SuperPoint::detectAndCompute(InputArray image, InputArray mask,
             desmat.at<float>(h, w) = des[index];    
         }    
     }    
-    desmat.copyTo(descriptors);    
+    if (!mask.empty()) {  
+        // 保存原始描述符  
+        Mat originalDescriptors;  
+        desmat.copyTo(originalDescriptors);  
+        
+        // 记录过滤前的关键点索引  
+        std::vector<int> validIndices;  
+        Mat maskMat = mask.getMat();  
+        for (int i = 0; i < keypoints.size(); i++) {  
+            const KeyPoint& kp = keypoints[i];  
+            if (maskMat.at<uchar>((int)(kp.pt.y + 0.5f), (int)(kp.pt.x + 0.5f)) != 0) {  
+                validIndices.push_back(i);  
+            }  
+        }  
+        
+        // 过滤关键点  
+        KeyPointsFilter::runByPixelsMask(keypoints, maskMat);  
+        
+        // 同步过滤描述符  
+        if (descriptors.needed() && !validIndices.empty()) {  
+            Mat filteredDescriptors(validIndices.size(), originalDescriptors.cols, originalDescriptors.type());  
+            for (int i = 0; i < validIndices.size(); i++) {  
+                originalDescriptors.row(validIndices[i]).copyTo(filteredDescriptors.row(i));  
+            }  
+            filteredDescriptors.copyTo(descriptors);  
+        }  
+    } else {  
+        desmat.copyTo(descriptors);  
+    }
 }    
   
 void SuperPoint::detect(InputArray image,    
@@ -106,10 +136,10 @@ void SuperPoint::detect(InputArray image,
     InputArray mask)    
 {    
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "SuperPoint");    
-    Ort::SessionOptions sessionOptions;    
-    sessionOptions.SetIntraOpNumThreads(1);    
-    sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
-        
+    // Ort::SessionOptions sessionOptions;    
+    // sessionOptions.SetIntraOpNumThreads(1);    
+    // sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
+    Ort::SessionOptions sessionOptions = createSessionOptions();
 #ifndef _WIN32  
     static Ort::Session extractorSession(env, m_modelPath.c_str(), sessionOptions);  
 #else  
@@ -128,7 +158,8 @@ void SuperPoint::detect(InputArray image,
     float mean, std;    
     std::vector<float> imgData = ApplyTransform(grayImg, mean, std);    
     std::vector<int64_t> inputShape{ 1, 1, grayImg.rows, grayImg.cols };    
-    Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);    
+    // Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);    
+    Ort::MemoryInfo memoryInfo = createMemoryInfo();
     Ort::Value inputTensor = Ort::Value::CreateTensor<float>(memoryInfo, imgData.data(), imgData.size(), inputShape.data(), inputShape.size());    
   
     const char* input_names[] = { "image" };    
@@ -147,6 +178,9 @@ void SuperPoint::detect(InputArray image,
         p.pt.x = static_cast<float>(kp[index]);    
         p.pt.y = static_cast<float>(kp[index + 1]);    
         keypoints[i] = p;    
+    } 
+    if (!mask.empty()) {    
+        KeyPointsFilter::runByPixelsMask(keypoints, mask.getMat());    
     }    
 }    
   
@@ -155,9 +189,10 @@ void SuperPoint::compute(InputArray image,
     OutputArray descriptors)    
 {    
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "SuperPoint");    
-    Ort::SessionOptions sessionOptions;    
-    sessionOptions.SetIntraOpNumThreads(1);    
-    sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
+    // Ort::SessionOptions sessionOptions;    
+    // sessionOptions.SetIntraOpNumThreads(1);    
+    // sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
+    Ort::SessionOptions sessionOptions = createSessionOptions();
         
 #ifndef _WIN32  
     static Ort::Session extractorSession(env, m_modelPath.c_str(), sessionOptions);  
@@ -179,7 +214,8 @@ void SuperPoint::compute(InputArray image,
   
     std::vector<int64_t> inputShape{ 1, 1, grayImg.rows, grayImg.cols };    
   
-    Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);    
+    // Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);  
+    Ort::MemoryInfo memoryInfo = createMemoryInfo();
     Ort::Value inputTensor = Ort::Value::CreateTensor<float>(memoryInfo, imgData.data(), imgData.size(), inputShape.data(), inputShape.size());    
   
     const char* input_names[] = { "image" };    
