@@ -20,7 +20,7 @@ of keypoint and match candidates. It works particularly well with SuperPoint fea
   
 @note This implementation requires ONNX Runtime and a pre-trained LightGlue model file.  
 */  
-class CV_EXPORTS LightGlue : public FeaturesMatcher  
+class CV_EXPORTS_W LightGlue : public FeaturesMatcher  
 {  
 public:  
     /** @brief Constructor  
@@ -97,9 +97,9 @@ protected:
             OrtCUDAProviderOptions cuda_options{};  
             cuda_options.device_id = 0;  
             sessionOptions.AppendExecutionProvider_CUDA(cuda_options);  
-            std::cout << "SuperPoint: Using GPU (CUDA) acceleration" << std::endl;  
+            std::cout << "LightGlue: Using GPU (CUDA) acceleration" << std::endl;  
         } catch (const std::exception& e) {  
-            std::cout << "SuperPoint: CUDA not available, falling back to CPU: " << e.what() << std::endl;  
+            std::cout << "LightGlue: CUDA not available, falling back to CPU: " << e.what() << std::endl;  
             // CPU是默认的，不需要额外配置  
         }  
           
