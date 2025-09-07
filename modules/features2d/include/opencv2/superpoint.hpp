@@ -72,32 +72,30 @@ protected:
     */  
     std::vector<float> ApplyTransform(const Mat& image, float& mean, float& std);  
 #ifdef HAVE_ONNXRUNTIME
-    Ort::SessionOptions createSessionOptions() {  
-        Ort::SessionOptions sessionOptions;  
-        sessionOptions.SetIntraOpNumThreads(1);  
-        sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);  
-          
-        // 尝试添加CUDA执行提供程序  
-        try {  
-            OrtCUDAProviderOptions cuda_options{};  
-            cuda_options.device_id = 0;  
-            sessionOptions.AppendExecutionProvider_CUDA(cuda_options);  
-            std::cout << "SuperPoint: Using GPU (CUDA) acceleration" << std::endl;  
-        } catch (const std::exception& e) {  
-            std::cout << "SuperPoint: CUDA not available, falling back to CPU: " << e.what() << std::endl;  
-            // CPU是默认的，不需要额外配置  
-        }  
-          
-        return sessionOptions;  
-    }  
-      
+    Ort::SessionOptions& createSessionOptions() {
+        static Ort::SessionOptions sessionOptions = []() {  
+            Ort::SessionOptions options;  
+            options.SetIntraOpNumThreads(1);    
+            options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
+                
+            // 尝试添加CUDA执行提供程序    
+            try {    
+                OrtCUDAProviderOptions cuda_options{};    
+                cuda_options.device_id = 0;    
+                options.AppendExecutionProvider_CUDA(cuda_options);    
+                std::cout << "SuperPoint: Using GPU (CUDA) acceleration" << std::endl;    
+            } catch (const std::exception& e) {    
+                std::cout << "SuperPoint: CUDA not available, falling back to CPU: " << e.what() << std::endl;    
+                // CPU是默认的，不需要额外配置    
+            }    
+            return options;  
+        }();  
+        return sessionOptions;    
+    }
     Ort::MemoryInfo createMemoryInfo() {  
         // 尝试使用GPU内存，失败则回退到CPU  
-        try {  
             return Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);  
-        } catch (const std::exception& e) {  
-            return Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);  
-        }  
+
     }
     #endif
 };  

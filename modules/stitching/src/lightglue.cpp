@@ -30,7 +30,7 @@ void LightGlue::match(const ImageFeatures& features1, const ImageFeatures& featu
     // Ort::SessionOptions sessionOptions;    
     // sessionOptions.SetIntraOpNumThreads(1);    
     // sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
-    Ort::SessionOptions sessionOptions = createSessionOptions();  
+    Ort::SessionOptions& sessionOptions = createSessionOptions();  
         
 #ifndef _WIN32  
     static Ort::Session lightglueSession(env, m_modelPath.c_str(), sessionOptions);  

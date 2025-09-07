@@ -44,11 +44,11 @@ int main(int argc, char* argv[]) {
     auto stitcher = cv::Stitcher::create(cv::Stitcher::PANORAMA);  
       
     // 设置SuperPoint特征检测器  
-    auto superpoint = cv::SuperPoint::create("./weights/superpoint.onnx");  
+    auto superpoint = cv::SuperPoint::create("/root/weights/superpoint.onnx");  
     stitcher->setFeaturesFinder(superpoint);  
       
     // 设置LightGlue匹配器  
-    auto lightglue = cv::detail::LightGlue::create("./weights/superpoint_lightglue.onnx");  
+    auto lightglue = cv::detail::LightGlue::create("/root/weights/superpoint_lightglue.onnx");  
     stitcher->setFeaturesMatcher(lightglue);  
       
     std::cout << "SuperPoint and LightGlue configured successfully!" << std::endl;  

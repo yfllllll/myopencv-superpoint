@@ -43,7 +43,7 @@ void SuperPoint::detectAndCompute(InputArray image, InputArray mask,
     // Ort::SessionOptions sessionOptions;    
     // sessionOptions.SetIntraOpNumThreads(1);    
     // sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
-    Ort::SessionOptions sessionOptions = createSessionOptions();
+    Ort::SessionOptions& sessionOptions = createSessionOptions();
         
 #ifndef _WIN32  
     static Ort::Session extractorSession(env, m_modelPath.c_str(), sessionOptions);  
@@ -139,7 +139,7 @@ void SuperPoint::detect(InputArray image,
     // Ort::SessionOptions sessionOptions;    
     // sessionOptions.SetIntraOpNumThreads(1);    
     // sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
-    Ort::SessionOptions sessionOptions = createSessionOptions();
+    Ort::SessionOptions& sessionOptions = createSessionOptions();
 #ifndef _WIN32  
     static Ort::Session extractorSession(env, m_modelPath.c_str(), sessionOptions);  
 #else  
@@ -192,7 +192,7 @@ void SuperPoint::compute(InputArray image,
     // Ort::SessionOptions sessionOptions;    
     // sessionOptions.SetIntraOpNumThreads(1);    
     // sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);    
-    Ort::SessionOptions sessionOptions = createSessionOptions();
+    Ort::SessionOptions& sessionOptions = createSessionOptions();
         
 #ifndef _WIN32  
     static Ort::Session extractorSession(env, m_modelPath.c_str(), sessionOptions);  
